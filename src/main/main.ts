@@ -9,7 +9,6 @@ import TrayApp from './TrayApp';
 import getContextMenu from './trayMenu';
 import MainEnv from './MainEnv';
 import IpcMain from './IpcMain';
-// import execSql from '../helpers/executaSQL';
 
 export default class AppUpdater {
   constructor() {

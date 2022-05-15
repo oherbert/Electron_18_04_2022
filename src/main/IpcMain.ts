@@ -1,8 +1,22 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 import { ipcMain } from 'electron';
 import querys from '../model/querys';
-import execSql from '../helpers/executaSQL';
-import { saveDBConfig, IDbConfig } from '../config/database';
+import execSql, { ping } from '../helpers/executaSQL';
+import getDBConfig, {
+  saveDBConfig,
+  IDbConfig,
+  changeDBConfig,
+  IDBParameter,
+} from '../config/database';
+import MainEnv from './MainEnv';
+import AppServer from './api/AppServer';
+import Tray from './TrayApp';
+
+const mainEnv = MainEnv.getInstance();
+const appServer = AppServer.getInstance();
+const tray = Tray.getInstance();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let server: any = null;
 
 // Singleton pattern
 export default class IpcMain {
@@ -22,17 +36,65 @@ export default class IpcMain {
   }
 }
 
-ipcMain.on('teste', async (event, parms = []) => {
-  try {
-    const resp = await execSql(querys.teste, parms);
-    console.log(resp);
+ipcMain.on('ping', async (event) => {
+  const resp = await ping();
+  event.reply('ping', resp);
+});
 
-    event.reply('teste', resp);
-  } catch (error) {
-    event.reply('teste', error);
+ipcMain.on('server', async (event, comand: string, port = 4000) => {
+  const resp = 'server on';
+
+  if (!server && comand === 'start')
+    server = appServer.server.listen(port, () => {
+      console.log('App start');
+    });
+  else if (server && comand === 'stop') {
+    server.close();
+    console.log('App Stop');
+  }
+  event.reply('server', resp);
+});
+
+// Channel that change job state
+ipcMain.on('job', (_event, comand: 'Start' | 'Stop', port = 4000) => {
+  if (!server && comand === 'Start')
+    server = appServer.server.listen(port, () => {
+      tray.setRadioBtnTrue(comand);
+      console.log(`App start port: ${port}`);
+    });
+  else if (server && comand === 'Start')
+    server.listen(port, () => {
+      tray.setRadioBtnTrue(comand);
+      console.log(`App start port: ${port}`);
+    });
+  else if (server && comand === 'Stop') {
+    server.close();
+    console.log('App Stop');
+    tray.setRadioBtnTrue(comand);
   }
 });
 
-ipcMain.on('saveDBConfig', async (event, param: IDbConfig, value: string) => {
-  event.reply('saveDBConfig', saveDBConfig(param, value));
+ipcMain.on('randomId', async (event) => {
+  const res = await execSql(querys.randomID);
+  event.reply('randomId', res);
+});
+
+ipcMain.on('getConfig', async (event) => {
+  const res = getDBConfig();
+  event.reply('getConfig', res);
+});
+
+ipcMain.on(
+  'changeDBConfig',
+  async (event, param: IDBParameter, value: string) => {
+    const saveRes = changeDBConfig(param, value);
+    mainEnv.reloadDBConfig = saveRes === 'saved';
+    event.reply('changeDBConfig', saveRes);
+  }
+);
+
+ipcMain.on('saveDBConfig', async (event, dbConfig: IDbConfig) => {
+  const saveRes = saveDBConfig(dbConfig);
+  mainEnv.reloadDBConfig = saveRes === 'saved';
+  event.reply('saveDBConfig', saveRes);
 });

@@ -1,1 +1,1 @@
-{ "user": "hr", "password": "hr", "connectString": "XEPDB2" }
+{"user":"hr","password":"hr","connectString":"(DESCRIPTION = (ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)))(CONNECT_DATA =(SERVICE_NAME = XEPDB1)))","appInstantClient":true}

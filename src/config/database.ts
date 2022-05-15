@@ -1,7 +1,18 @@
 import fs from 'fs';
 import MainEnv from '../main/MainEnv';
 
-export type IDbConfig = 'user' | 'password' | 'connectString';
+export type IDBParameter =
+  | 'user'
+  | 'password'
+  | 'connectString'
+  | 'appInstantClient';
+
+export interface IDbConfig {
+  user: string;
+  password: string;
+  connectString: string;
+  appInstantClient?: boolean;
+}
 
 /// /
 const main = MainEnv.getInstance();
@@ -9,8 +20,6 @@ const file = main.dbConfig;
 
 /// /
 const readDBConfig = () => {
-  //   console.log(file);
-
   try {
     return fs.readFileSync(file, 'utf8');
   } catch (e) {
@@ -19,10 +28,11 @@ const readDBConfig = () => {
 };
 
 export default function getDBConfig() {
-  let config: { user: string; password: string; connectString: string } = {
+  let config: IDbConfig = {
     user: '',
     password: '',
     connectString: 'xepdb1',
+    appInstantClient: false,
   };
 
   try {
@@ -35,7 +45,7 @@ export default function getDBConfig() {
   return config;
 }
 
-export function saveDBConfig(param: IDbConfig, value: string) {
+export function changeDBConfig(param: IDBParameter, value: string) {
   try {
     const config = getDBConfig();
     const oldValue = `"${param}": "${config[param]}"`;
@@ -47,14 +57,22 @@ export function saveDBConfig(param: IDbConfig, value: string) {
 
     const result = dataFile.replace(oldValue, newValue);
 
-    // console.log(dataFile);
-    // console.log(oldValue);
-    // console.log(newValue);
-    // console.log(result);
-
     fs.writeFileSync(file, result, 'utf8');
 
-    return 'Saved';
+    return 'saved';
+  } catch (e) {
+    return e;
+  }
+}
+
+export function saveDBConfig(pConfig: IDbConfig) {
+  try {
+    const config = getDBConfig();
+    const newConfig = { ...config, ...pConfig };
+
+    fs.writeFileSync(file, JSON.stringify(newConfig), 'utf8');
+
+    return 'saved';
   } catch (e) {
     return e;
   }

@@ -1,85 +1,43 @@
-import { useState } from 'react';
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
-import './App.css';
-
-const Hello = () => {
-  const { on, saveDBConfig } = window.electron.ipcRenderer;
-
-  const [data, setData] = useState('');
-  const [user, setUser] = useState('');
-
-  on('teste', (resp: Record<string, number>[] | string[]) => {
-    if (
-      Array.isArray(resp) &&
-      resp.length > 0 &&
-      typeof resp[0] === 'object' &&
-      'teste' in resp[0]
-    )
-      setData(resp[0].teste.toString());
-    else if (Array.isArray(resp) && resp.length > 0 && resp[0].toString())
-      setData(resp[0].toString());
-  });
-
-  on('saveDBConfig', (res: string) => {
-    console.log(res);
-  });
-
-  return (
-    <div>
-      <div className="Hello">
-        <img width="200px" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <h2>{data && `Resposta: ${data}`}</h2>
-      <input type="text" onChange={(e: any) => setUser(e.target.value)} />
-      <button
-        type="button"
-        onClick={() => {
-          if (user.length > 0) saveDBConfig('user', user);
-          window.electron.ipcRenderer.execSql('teste', [
-            Math.round(Math.random() * 10).toString(10),
-          ]);
-        }}
-      >
-        Teste
-      </button>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
-    </div>
-  );
-};
+import { useContext, useState } from 'react';
+import { MenuHidden } from './components/hidden-menu';
+import { Context } from './context/AppContext';
+import MainSection from './style';
+import ConfigPage from './views/config';
+import Header from './views/header';
+import menu from './menu';
 
 export default function App() {
+  const { theme } = useContext(Context);
+  const [page, setPage] = useState(true);
+
+  const render = () => {
+    return page ? (
+      <div>
+        <p>main</p>
+      </div>
+    ) : (
+      <ConfigPage />
+    );
+  };
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
-    </Router>
+    <MainSection style={theme}>
+      <Header title="Main" />
+      <div className="div-main-body">
+        <MenuHidden
+          items={menu}
+          color={theme.color}
+          background={theme.background}
+        />
+        <div className="div-main-context">
+          <input
+            type="checkbox"
+            onChange={() => setPage(!page)}
+            checked={page}
+          />
+          {render()}
+        </div>
+      </div>
+    </MainSection>
   );
 }

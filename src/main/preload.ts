@@ -1,3 +1,4 @@
+import { IDbConfig } from 'config/database';
 import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('electron', {
@@ -5,8 +6,17 @@ contextBridge.exposeInMainWorld('electron', {
     execSql(channel: string, params: string[]) {
       ipcRenderer.send(channel, params);
     },
-    saveDBConfig(param: string, value: string) {
-      ipcRenderer.send('saveDBConfig', param, value);
+    saveDBConfig(dbConfig: IDbConfig) {
+      ipcRenderer.send('saveDBConfig', dbConfig);
+    },
+    changeDBConfig(param: string, value: string) {
+      ipcRenderer.send('changeDBConfig', param, value);
+    },
+    getDBConfig() {
+      ipcRenderer.send('getConfig');
+    },
+    setRadioBtnTrue(jobState: 'Start' | 'Stop') {
+      ipcRenderer.send('job', jobState);
     },
     on(channel: string, func: (...args: unknown[]) => void) {
       ipcRenderer.removeAllListeners(channel);
