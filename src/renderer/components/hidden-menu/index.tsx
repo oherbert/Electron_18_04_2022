@@ -1,14 +1,11 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/no-array-index-key */
-import React, { useContext, useReducer } from 'react';
+import React, { useReducer } from 'react';
 import { Link } from 'react-router-dom';
-import { Context } from 'renderer/context/AppContext';
 import * as Styled from './styles';
 
 interface IHiddenMenu {
   items: Array<IItemLink | IItemContener>;
-  background: string;
-  color?: string;
 }
 
 export interface IItemLink {
@@ -32,20 +29,21 @@ const reducer = (state: string[], payload: string) => {
   return [...newState];
 };
 
-export const MenuHidden: React.FC<IHiddenMenu> = ({
-  items,
-  ...props
-}: IHiddenMenu) => {
+export const MenuHidden: React.FC<IHiddenMenu> = ({ items }: IHiddenMenu) => {
   const [state, dispatch] = useReducer(reducer, [] as string[]);
-  const { theme } = useContext(Context);
 
   const createMenu = (
     item: IItemContener | IItemLink,
     nivel = 1
   ): React.ReactChild => {
     return 'link' in item ? (
-      <Link className="link" to={item.link} key={`mnLink${Math.random()}`}>
-        <Styled.Item className={`nivel-${nivel}`} style={theme.menu}>
+      <Link
+        className="link"
+        to={item.link}
+        key={`mnLink${Math.random()}`}
+        onClick={() => console.log(window.location.href)}
+      >
+        <Styled.Item className={`nivel-${nivel}`}>
           <span className="span-arrow">
             <div className="arrow-inv" />
           </span>
@@ -79,7 +77,7 @@ export const MenuHidden: React.FC<IHiddenMenu> = ({
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
-    <Styled.MenuHidden {...props} onMouseLeave={() => dispatch('clean')}>
+    <Styled.MenuHidden onMouseLeave={() => dispatch('clean')}>
       <Styled.Menu className="menu">
         {items.map((item, idx) => (
           <Styled.MenuDrop key={`mnDrop${idx}`}>

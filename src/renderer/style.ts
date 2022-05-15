@@ -1,23 +1,16 @@
 import styled, { css } from 'styled-components';
 
 const MainSection = styled.section`
-  ${(props) => css`
+  ${({ theme: { background } }) => css`
     display: inline-block;
-    height: 99.4vh;
+    height: 99.5vh;
     width: 100%;
-    /* background: linear-gradient(
-      200.96deg,
-      #fedc2a -29.09%,
-      #dd5789 51.77%,
-      #7a2c9e 129.35%
-    ); */
+    background: ${background};
+    overflow: hidden;
 
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
     .div-main-body {
       display: flexbox;
-      height: 88%;
+      height: 100%;
       // background: orangered;
     }
     .div-main-context {

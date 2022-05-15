@@ -1,5 +1,8 @@
 import { createContext, useEffect, useReducer } from 'react';
+import { GlobalStyles } from 'renderer/styles/global-styles';
+import { darkTheme, lightTheme } from 'renderer/styles/themes';
 import { IGlobalState } from 'renderer/types/renderTypes';
+import { ThemeProvider } from 'styled-components';
 import globalState from './globalState';
 import reducer from './reducer';
 
@@ -50,8 +53,11 @@ export const AppContext: React.FC<IContextApp> = ({
   );
 
   return (
-    <Context.Provider value={{ ...state, dispatch }}>
-      {Array.isArray(children) ? children.map((child) => child) : children}
-    </Context.Provider>
+    <ThemeProvider theme={state.userTheme === 'light' ? lightTheme : darkTheme}>
+      <GlobalStyles />
+      <Context.Provider value={{ ...state, dispatch }}>
+        {Array.isArray(children) ? children.map((child) => child) : children}
+      </Context.Provider>
+    </ThemeProvider>
   );
 };

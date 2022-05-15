@@ -1,42 +1,41 @@
-import { useContext, useState } from 'react';
+// import { useState } from 'react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { MenuHidden } from './components/hidden-menu';
-import { Context } from './context/AppContext';
 import MainSection from './style';
 import ConfigPage from './views/config';
 import Header from './views/header';
 import menu from './menu';
 
 export default function App() {
-  const { theme } = useContext(Context);
-  const [page, setPage] = useState(true);
+  const location = useLocation();
 
   const render = () => {
-    return page ? (
-      <div>
-        <p>main</p>
-      </div>
-    ) : (
-      <ConfigPage />
-    );
+    let pg;
+    switch (location.hash) {
+      case '#dataBase':
+        pg = <ConfigPage />;
+        break;
+      default:
+        pg = (
+          <div>
+            <p>{location.hash}</p>
+          </div>
+        );
+        break;
+    }
+
+    return pg;
   };
 
+  useEffect(() => console.log(location.hash), [location]);
+
   return (
-    <MainSection style={theme}>
+    <MainSection>
       <Header title="Main" />
       <div className="div-main-body">
-        <MenuHidden
-          items={menu}
-          color={theme.color}
-          background={theme.background}
-        />
-        <div className="div-main-context">
-          <input
-            type="checkbox"
-            onChange={() => setPage(!page)}
-            checked={page}
-          />
-          {render()}
-        </div>
+        <MenuHidden items={menu} />
+        <div className="div-main-context">{render()}</div>
       </div>
     </MainSection>
   );

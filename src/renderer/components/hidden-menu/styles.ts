@@ -1,18 +1,23 @@
 import styled, { css } from 'styled-components';
-
-interface IMenuHidden {
-  background: string;
-  color?: string;
-}
+import { lighten } from 'polished';
 
 // Deve ser maior que 80 e 250
-export const MenuHidden = styled.div<IMenuHidden>`
-  ${({ background, color = 'white' }) => css`
+export const MenuHidden = styled.div`
+  ${({
+    theme: {
+      menu: { primary, second, color, background },
+    },
+  }) => css`
     color: ${color};
     width: 10rem;
-    height: 100%;
     overflow: hidden;
-
+    background-color: ${background};
+    background: linear-gradient(
+      180deg,
+      ${lighten(0.1, background)} 30%,
+      ${lighten(0.2, background)} 80%,
+      ${lighten(0.3, background)} 100%
+    );
     font-size: 1rem;
     font-weight: bold;
     transition: width 0.1s;
@@ -20,7 +25,7 @@ export const MenuHidden = styled.div<IMenuHidden>`
 
     .span-arrow {
       padding: 0px 8px;
-      border-right: 2px solid black;
+      border-right: 2px solid ${color};
       height: 100%;
     }
     .span-caption {
@@ -31,8 +36,8 @@ export const MenuHidden = styled.div<IMenuHidden>`
     .arrow-inv {
       display: inline-block;
       background-color: transparent;
-      border-bottom: 3px solid black;
-      border-right: 3px solid black;
+      border-bottom: 2px solid ${color};
+      border-right: 2px solid ${color};
 
       height: 8px;
       width: 8px;
@@ -50,19 +55,21 @@ export const MenuHidden = styled.div<IMenuHidden>`
     }
 
     .nivel-1 {
-      background-color: ${background};
+      background-color: ${primary};
       background-position: center 15px;
       border-bottom: 2px solid black;
+      border-top: 2px solid black;
+      margin-top: -1px;
     }
 
     .nivel-2 {
-      background-color: ${background};
+      background-color: ${second};
       background-position: center 15px;
       border-bottom: 2px solid black;
     }
     .nivel-1:hover,
     .nivel-2:hover {
-      transform: scale(1.02);
+      transform: scale(1.01);
     }
     .link {
       color: ${color};

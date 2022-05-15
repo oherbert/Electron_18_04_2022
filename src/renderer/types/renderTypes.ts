@@ -24,7 +24,6 @@ export interface ITheme {
 export interface IGlobalState {
   userTheme: Theme;
   job: Job;
-  theme: ITheme;
   dispatch: Dispatch<IAction>;
   getDBConfig: () => Promise<IDbConfig>;
   saveDBConfig(IDbConfig: IDbConfig): Promise<string>;

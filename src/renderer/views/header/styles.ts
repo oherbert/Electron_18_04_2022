@@ -1,13 +1,27 @@
 import styled, { css } from 'styled-components';
+import { lighten } from 'polished';
 
 interface ISphere {
   colorH: number;
 }
 
 export const Header = styled.section`
-  ${() => css`
+  ${({
+    theme: {
+      menu: { color, background },
+    },
+  }) => css`
+    background: ${background};
+    background: linear-gradient(
+      90deg,
+      ${lighten(0.1, background)} 30%,
+      ${lighten(0.2, background)} 80%,
+      ${lighten(0.3, background)} 100%
+    );
     display: inline;
-    margin-top: 10px;
+    color: ${color};
+    border: 1px solid black;
+    margin-top: 5px;
     width: 100%;
     height: fit-content;
     padding-bottom: 5px;
