@@ -14,7 +14,9 @@ const MainSection = styled.section`
       // background: orangered;
     }
     .div-main-context {
-      background: burlywood;
+      width: 90%;
+      height: 100%;
+      overflow: auto;
     }
   `}
 `;

@@ -1,0 +1,1 @@
+{"port":4000,"routes":{"method":"GET","url":"/teste","sql":"select * from hr.departments\n"}}

@@ -37,12 +37,7 @@ export const MenuHidden: React.FC<IHiddenMenu> = ({ items }: IHiddenMenu) => {
     nivel = 1
   ): React.ReactChild => {
     return 'link' in item ? (
-      <Link
-        className="link"
-        to={item.link}
-        key={`mnLink${Math.random()}`}
-        onClick={() => console.log(window.location.href)}
-      >
+      <Link className="link" to={item.link} key={`mnLink${Math.random()}`}>
         <Styled.Item className={`nivel-${nivel}`}>
           <span className="span-arrow">
             <div className="arrow-inv" />

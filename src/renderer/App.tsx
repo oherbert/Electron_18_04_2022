@@ -1,38 +1,39 @@
-// import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MenuHidden } from './components/hidden-menu';
 import MainSection from './style';
-import ConfigPage from './views/config';
+import DbConfigPg from './views/config/dbConfig';
 import Header from './views/header';
 import menu from './menu';
+import ApiPgConfig from './views/config/apiConfig';
 
 export default function App() {
   const location = useLocation();
+  const [title, setTitle] = useState('');
 
   const render = () => {
     let pg;
     switch (location.hash) {
       case '#dataBase':
-        pg = <ConfigPage />;
+        if (title !== 'Banco de Dados') setTitle('Banco de Dados');
+        pg = <DbConfigPg />;
+        break;
+      case '#api':
+        if (title !== 'API') setTitle('API');
+        pg = <ApiPgConfig />;
         break;
       default:
-        pg = (
-          <div>
-            <p>{location.hash}</p>
-          </div>
-        );
+        if (title !== 'Principal') setTitle('Principal');
+        pg = <ApiPgConfig />;
         break;
     }
 
     return pg;
   };
 
-  useEffect(() => console.log(location.hash), [location]);
-
   return (
     <MainSection>
-      <Header title="Main" />
+      <Header title={title} />
       <div className="div-main-body">
         <MenuHidden items={menu} />
         <div className="div-main-context">{render()}</div>

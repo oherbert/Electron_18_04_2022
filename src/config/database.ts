@@ -1,12 +1,6 @@
 import fs from 'fs';
 import MainEnv from '../main/MainEnv';
 
-export type IDBParameter =
-  | 'user'
-  | 'password'
-  | 'connectString'
-  | 'appInstantClient';
-
 export interface IDbConfig {
   user: string;
   password: string;
@@ -45,11 +39,11 @@ export default function getDBConfig() {
   return config;
 }
 
-export function changeDBConfig(param: IDBParameter, value: string) {
+export function changeDBConfig(key: keyof IDbConfig, value: string) {
   try {
     const config = getDBConfig();
-    const oldValue = `"${param}": "${config[param]}"`;
-    const newValue = `"${param}": "${value}"`;
+    const oldValue = `"${key}": "${config[key]}"`;
+    const newValue = `"${key}": "${value}"`;
 
     if (oldValue === newValue) return 'Not Change';
 

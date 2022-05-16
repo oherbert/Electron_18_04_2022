@@ -45,7 +45,7 @@ export default async function execSql(
   options: ExecuteOptions = {}
 ) {
   reloadDBConfig();
-  console.log(oracledb.oracleClientVersion);
+  // console.log(oracledb.oracleClientVersion);
 
   let pool;
 
@@ -59,6 +59,8 @@ export default async function execSql(
 
       return result.rows;
     } catch (err: any) {
+      console.log(err);
+
       return [err.message];
     } finally {
       if (connection) {

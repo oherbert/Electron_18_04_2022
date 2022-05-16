@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 import { ipcMain } from 'electron';
+import getApiConfig, { IApiConfig, saveApiConfig } from '../config/api';
 import querys from '../model/querys';
 import execSql, { ping } from '../helpers/executaSQL';
 import getDBConfig, {
   saveDBConfig,
   IDbConfig,
   changeDBConfig,
-  IDBParameter,
 } from '../config/database';
 import MainEnv from './MainEnv';
 import AppServer from './api/AppServer';
@@ -41,11 +41,12 @@ ipcMain.on('ping', async (event) => {
   event.reply('ping', resp);
 });
 
-ipcMain.on('server', async (event, comand: string, port = 4000) => {
+ipcMain.on('server', async (event, comand: string, port = 19020) => {
   const resp = 'server on';
+  const api = getApiConfig();
 
   if (!server && comand === 'start')
-    server = appServer.server.listen(port, () => {
+    server = appServer.server.listen(api.port || port, () => {
       console.log('App start');
     });
   else if (server && comand === 'stop') {
@@ -56,16 +57,18 @@ ipcMain.on('server', async (event, comand: string, port = 4000) => {
 });
 
 // Channel that change job state
-ipcMain.on('job', (_event, comand: 'Start' | 'Stop', port = 4000) => {
+ipcMain.on('job', (_event, comand: 'Start' | 'Stop', port = 19020) => {
+  const api = getApiConfig();
+
   if (!server && comand === 'Start')
-    server = appServer.server.listen(port, () => {
+    server = appServer.server.listen(api.port || port, () => {
       tray.setRadioBtnTrue(comand);
-      console.log(`App start port: ${port}`);
+      console.log(`App start port: ${api.port || port}`);
     });
   else if (server && comand === 'Start')
-    server.listen(port, () => {
+    server.listen(api.port || port, () => {
       tray.setRadioBtnTrue(comand);
-      console.log(`App start port: ${port}`);
+      console.log(`App start port: ${api.port || port}`);
     });
   else if (server && comand === 'Stop') {
     server.close();
@@ -86,7 +89,7 @@ ipcMain.on('getConfig', async (event) => {
 
 ipcMain.on(
   'changeDBConfig',
-  async (event, param: IDBParameter, value: string) => {
+  async (event, param: keyof IDbConfig, value: string) => {
     const saveRes = changeDBConfig(param, value);
     mainEnv.reloadDBConfig = saveRes === 'saved';
     event.reply('changeDBConfig', saveRes);
@@ -97,4 +100,14 @@ ipcMain.on('saveDBConfig', async (event, dbConfig: IDbConfig) => {
   const saveRes = saveDBConfig(dbConfig);
   mainEnv.reloadDBConfig = saveRes === 'saved';
   event.reply('saveDBConfig', saveRes);
+});
+
+ipcMain.on('getApiConfig', async (event) => {
+  const res = getApiConfig();
+  event.reply('getApiConfig', res);
+});
+
+ipcMain.on('saveApiConfig', async (event, apiConfig: IApiConfig) => {
+  const saveRes = saveApiConfig(apiConfig);
+  event.reply('saveApiConfig', saveRes);
 });

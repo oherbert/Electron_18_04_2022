@@ -8,6 +8,7 @@ export default class MainEnv {
   public isQuitting: boolean;
   public reloadDBConfig: boolean;
   public dbConfig: string;
+  public apiConfig: string;
   public oraClient: string;
   private RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -16,6 +17,7 @@ export default class MainEnv {
   constructor() {
     this.isQuitting = false;
     this.dbConfig = this.getAssetPath('/config/database.json');
+    this.apiConfig = this.getAssetPath('/config/api.json');
     this.oraClient = this.getAssetPath('/instantclient');
     this.reloadDBConfig = false;
   }

@@ -3,7 +3,7 @@ import oracledb, { BindParameters, ExecuteOptions } from 'oracledb';
 import getDBConfig from '../config/database';
 import MainEnv from '../main/MainEnv';
 
-oracledb.fetchAsString = [oracledb.DATE /* , oracledb.NUMBER */];
+oracledb.fetchAsString = [oracledb.DATE, oracledb.CLOB];
 oracledb.autoCommit = true;
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
@@ -18,7 +18,12 @@ const setAppInstantClient = () => {
       libPath = mainEnv.oraClient;
     }
     if (libPath && fs.existsSync(libPath)) {
-      oracledb.initOracleClient({ libDir: libPath });
+      try {
+        oracledb.initOracleClient({ libDir: libPath });
+        console.log(oracledb.oracleClientVersion);
+      } catch (error: any) {
+        console.log(error.message);
+      }
     }
   }
 };

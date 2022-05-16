@@ -1,3 +1,4 @@
+import { IApiConfig } from 'config/api';
 import { IDbConfig } from 'config/database';
 import { contextBridge, ipcRenderer } from 'electron';
 
@@ -14,6 +15,12 @@ contextBridge.exposeInMainWorld('electron', {
     },
     getDBConfig() {
       ipcRenderer.send('getConfig');
+    },
+    saveApiConfig(apiConfig: IApiConfig) {
+      ipcRenderer.send('saveApiConfig', apiConfig);
+    },
+    getApiConfig() {
+      ipcRenderer.send('getApiConfig');
     },
     setRadioBtnTrue(jobState: 'Start' | 'Stop') {
       ipcRenderer.send('job', jobState);
