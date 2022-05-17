@@ -138,6 +138,7 @@ export default function ApiPgConfig() {
                   },
                 });
               }}
+              title="Sql"
             />
           </label>
           <button className="button-api" type="submit">

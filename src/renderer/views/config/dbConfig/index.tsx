@@ -1,3 +1,4 @@
+/* eslint-disable promise/always-return */
 /* eslint-disable promise/catch-or-return */
 /* eslint-disable no-nested-ternary */
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -26,6 +27,7 @@ const DbConfigPg: React.FC = () => {
 
   useEffect(() => {
     if (isMounted) {
+      setPing('Testando conexão...');
       execSql<string>('ping')
         .then((res) => setPing(res))
         .catch((err) => console.log(err));
@@ -65,7 +67,26 @@ const DbConfigPg: React.FC = () => {
       !connectString ||
       connectString === noJsConfig;
 
-    if (!configOk) saveDBConfig(config);
+    if (!configOk)
+      saveDBConfig(config)
+        .then((res) => {
+          if (res === 'saved') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Configuração salva com sucesso!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
+        })
+        .catch((e) =>
+          Swal.fire({
+            icon: 'error',
+            title: `Erro ao salvar!\n${e}`,
+            showConfirmButton: false,
+            timer: 1500,
+          })
+        );
     console.log(config);
   }
 
@@ -134,27 +155,32 @@ const DbConfigPg: React.FC = () => {
           <button
             className="button-db"
             type="button"
-            onClick={() =>
+            onClick={() => {
+              setPing('Aguardando resposta do banco de dados...');
               execSql<[{ id: number }]>('randomId')
                 .then((res) => {
                   // eslint-disable-next-line promise/always-return
-                  if (res && res[0].id)
+                  if (res && res[0].id) {
+                    setPing('online');
+
                     Swal.fire({
                       icon: 'success',
                       title: 'Banco de dados conectado!',
                       showConfirmButton: false,
                       timer: 1500,
                     });
+                  } else setPing(`${res}`);
                 })
-                .catch((e) =>
+                .catch((e) => {
+                  setPing('offline');
                   Swal.fire({
                     icon: 'error',
                     title: `Banco de dados não  conectado!\n${e}`,
                     showConfirmButton: false,
                     timer: 1500,
-                  })
-                )
-            }
+                  });
+                });
+            }}
           >
             Testar
           </button>

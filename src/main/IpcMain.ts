@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/lines-between-class-members */
 import { ipcMain } from 'electron';
 import getApiConfig, { IApiConfig, saveApiConfig } from '../config/api';
 import querys from '../model/querys';
@@ -13,14 +12,13 @@ import AppServer from './api/AppServer';
 import Tray from './TrayApp';
 
 const mainEnv = MainEnv.getInstance();
-const appServer = AppServer.getInstance();
+let apiStatus: 'Start' | 'Stop' = 'Stop';
 const tray = Tray.getInstance();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let server: any = null;
 
 // Singleton pattern
 export default class IpcMain {
   private static instance: IpcMain;
+
   public static validChannels = ['theme', 'job', 'resultSql'];
   // constructor() {}
 
@@ -41,37 +39,34 @@ ipcMain.on('ping', async (event) => {
   event.reply('ping', resp);
 });
 
-ipcMain.on('server', async (event, comand: string, port = 19020) => {
-  const resp = 'server on';
-  const api = getApiConfig();
+// ipcMain.on('server', async (event, comand: string, port = 19020) => {
+//   const resp = 'server on';
+//   const api = getApiConfig();
 
-  if (!server && comand === 'start')
-    server = appServer.server.listen(api.port || port, () => {
-      console.log('App start');
-    });
-  else if (server && comand === 'stop') {
-    server.close();
-    console.log('App Stop');
-  }
-  event.reply('server', resp);
-});
+//   console.log('server');
+
+//   if (!server && comand === 'start')
+//     server = appServer.server.listen(api.port || port, () => {
+//       console.log('App start');
+//     });
+//   else if (server && comand === 'stop') {
+//     server.close();
+//     console.log('App Stop');
+//   }
+//   event.reply('server', resp);
+// });
 
 // Channel that change job state
-ipcMain.on('job', (_event, comand: 'Start' | 'Stop', port = 19020) => {
-  const api = getApiConfig();
+ipcMain.on('job', (_event, comand: 'Start' | 'Stop') => {
+  const setBtnTrue = () => tray.setRadioBtnTrue('Start');
 
-  if (!server && comand === 'Start')
-    server = appServer.server.listen(api.port || port, () => {
-      tray.setRadioBtnTrue(comand);
-      console.log(`App start port: ${api.port || port}`);
-    });
-  else if (server && comand === 'Start')
-    server.listen(api.port || port, () => {
-      tray.setRadioBtnTrue(comand);
-      console.log(`App start port: ${api.port || port}`);
-    });
-  else if (server && comand === 'Stop') {
-    server.close();
+  const appServer = AppServer.getInstance();
+  apiStatus = comand;
+
+  if (comand === 'Start') {
+    appServer.start(setBtnTrue);
+  } else if (comand === 'Stop') {
+    appServer.stop();
     console.log('App Stop');
     tray.setRadioBtnTrue(comand);
   }
@@ -109,5 +104,12 @@ ipcMain.on('getApiConfig', async (event) => {
 
 ipcMain.on('saveApiConfig', async (event, apiConfig: IApiConfig) => {
   const saveRes = saveApiConfig(apiConfig);
+
+  // Sobe a Api com as novas configurações
+  if (saveRes === 'saved') {
+    const server = AppServer.getNewInstance();
+    if (apiStatus === 'Start') server.start();
+  }
+
   event.reply('saveApiConfig', saveRes);
 });

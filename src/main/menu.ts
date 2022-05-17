@@ -207,14 +207,6 @@ export default class MenuBuilder {
           },
         },
         {
-          label: 'Documentation',
-          click() {
-            shell.openExternal(
-              'https://github.com/electron/electron/tree/main/docs#readme'
-            );
-          },
-        },
-        {
           label: 'Community Discussions',
           click() {
             shell.openExternal('https://www.electronjs.org/community');
@@ -351,14 +343,6 @@ export default class MenuBuilder {
             label: 'Learn More',
             click() {
               shell.openExternal('https://electronjs.org');
-            },
-          },
-          {
-            label: 'Documentation',
-            click() {
-              shell.openExternal(
-                'https://github.com/electron/electron/tree/main/docs#readme'
-              );
             },
           },
           {

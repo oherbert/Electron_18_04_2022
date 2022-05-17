@@ -42,8 +42,11 @@ const ApiConfig = styled.div`
         margin-top: 5px;
         width: 460px;
         height: 225px;
-        font-size: 1rem;
         resize: none;
+        font-family: Consolas, 'courier new';
+        background-color: #f1f1f1;
+        padding: 2px;
+        font-size: 105%;
       }
       input {
         font-size: 1.1rem;
