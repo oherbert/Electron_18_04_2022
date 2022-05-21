@@ -1,1 +1,1 @@
-{"port":4000,"routes":{"method":"GET","url":"/teste","sql":"select rownum id, e.* from hr.dw_empregados e"}}
+{"port":4000,"routes":{"method":"GET","url":"/teste","sql":"select rownum id, \n       --sysdate data,\n       e.* \nfrom hr.dw_empregados e"}}
