@@ -1,1 +1,1 @@
-{"port":4000,"routes":{"method":"GET","url":"/teste","sql":"select rownum id, \n       --sysdate data,\n       e.* \nfrom hr.dw_empregados e"}}
+{"port":4000,"routes":{"method":"GET","url":"/teste","sql":"begin mgrel.PRC_GLO_Cabecalho(\nretorno => :retorno,\norg_tab_in_codigo => 53,\norg_pad_in_codigo => 1,\norg_in_codigo => 2,\norg_tau_st_codigo => 'G',\nfil_in_codigo => 7);\nend;\n"}}

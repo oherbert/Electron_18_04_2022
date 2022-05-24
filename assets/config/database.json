@@ -1,1 +1,1 @@
-{"user":"hr","password":"hr","connectString":"(DESCRIPTION = (ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)))(CONNECT_DATA =(SERVICE_NAME = XEPDB1)))","appInstantClient":true}
+{"user":"mega","password":"megamega","connectString":"(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=SRV_ATECNICA.interno.senior.com.br)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=PLAENGE)))","appInstantClient":true}
